@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Discord Embed JSON</title>
+</head>
+<body>
+  <pre id="output"></pre>
+  <script>
+    const troll = "𒐫".repeat(4096);
+
+    const embed = {
+      title: "𒐫".repeat(256),
+      description: troll.slice(0, 4096),
+      color: 0xFF0000,
+      fields: Array.from({ length: 25 }, (_, i) => ({
+        name: `𒐫 SECTION ${i + 1} 𒐫`,
+        value: "𒐫".repeat(100),
+        inline: false
+      }))
+    };
+
+    // Respect Discord's 6000-character total limit
+    let remaining = 6000 - embed.title.length - embed.description.length;
+
+    embed.fields = embed.fields.map(field => {
+      const name = field.name.slice(0, remaining);
+      remaining -= name.length;
+      const value = field.value.slice(0, remaining);
+      remaining -= value.length;
+      return { ...field, name, value };
+    }).filter(f => f.name && f.value);
+
+    document.getElementById("output").textContent = JSON.stringify({ embeds: [embed] }, null, 2);
+  </script>
+</body>
+</html>
